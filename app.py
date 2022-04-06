@@ -39,7 +39,7 @@ class UserModel(db.Model):
 
 
 
-class Item(Resource):
+class User(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('price',
         type=float,
@@ -54,40 +54,47 @@ class Item(Resource):
 
         return {"user": result}
 
-    def post(self, name):
-        if next(filter(lambda x: x['name'] == name, items), None) is not None:
-            return {'message': "An item with name '{}' already exists.".format(name)}
+    def post(self, id):
+        if request.json:
+            data = request.get_json()
+            new_user = UserModel(id=id, firstname=data['firstname'], lastname=data['lastname'])
+            db.session.add(new_user)
+            db.session.commit()
 
-        data = Item.parser.parse_args()
+            return {"Message": f"Registration for {new_user.firstname} {new_user.lastname} has been created successfully"}
 
-        item = {'name': name, 'price': data['price']}
-        items.append(item)
-        return item
+        return {"Error": "Unable to create user"}
 
-    @jwt_required()
-    def delete(self, name):
-        global items
-        items = list(filter(lambda x: x['name'] != name, items))
-        return {'message': 'Item deleted'}
+    # @jwt_required()
+    def delete(self):
+        user = UserModel.query.get_or_404(id)
+        db.session.delete(user)
+        db.session.commit()
+        return {"message": "user deleted"}
 
-    @jwt_required()
-    def put(self, name):
-        data = Item.parser.parse_args()
-        # Once again, print something not in the args to verify everything works
-        item = next(filter(lambda x: x['name'] == name, items), None)
-        if item is None:
-            item = {'name': name, 'price': data['price']}
-            items.append(item)
-        else:
-            item.update(data)
-        return item
+    # @jwt_required()
+    def put(self, id):
+        user = UserModel.query.get_or_404(id)
+        data = request.get_json()
+        user.firstname = data['firstname']
+        user.lastname = data['lastname']
+        db.session.add(user)
+        db.session.commit()
+        return {"message": "Successfully updated user details"}
 
-class ItemList(Resource):
+class Users(Resource):
     def get(self):
-        return {'items': items}
+        users = UserModel.query.all()
+        results = [
+            {
+                "id": user.id,
+                "firstname": user.firstname,
+                "lastname": user.lastname,
+            } for user in users
+        ]
 
-api.add_resource(Item, '/item/<string:id>')
-api.add_resource(ItemList, '/items')
+api.add_resource(User, '/user/<string:id>')
+api.add_resource(Users, '/users')
 
 
 if __name__ == "__main__":
