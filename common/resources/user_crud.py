@@ -1,21 +1,26 @@
 from flask_restful import Resource
 from flask import request
+from flask_jwt import jwt_required
 from common.models.user import UserModel
 from common.configuration.db import db
 
 class User(Resource):
 
-    # @jwt_required()
-    def get(self, id):
-        user = UserModel.query.get_or_404(id)
-        result = {"id": id, "firstname": user.firstname, "lastname": user.lastname}
+    @jwt_required()
+    def get(self):
+        data = request.get_json()
+        user = UserModel.query.filter_by(username=data['username']).first()
+        result = {"username": user.username, "email": user.email}
 
         return {"user": result}
 
-    def post(self, id):
+    def post(self):
         if request.json:
             data = request.get_json()
-            new_user = UserModel(id=id, firstname=data['firstname'], lastname=data['lastname'])
+            print(id)
+            new_user = UserModel(
+                username=data['username'], firstname=data['firstname'],
+                lastname=data['lastname'], email=data['email'], password=data['password'])
             db.session.add(new_user)
             db.session.commit()
 
@@ -24,7 +29,7 @@ class User(Resource):
         return {"Error": "Unable to create user"}
 
     # @jwt_required()
-    def delete(self):
+    def delete(self, id):
         user = UserModel.query.get_or_404(id)
         db.session.delete(user)
         db.session.commit()
@@ -34,8 +39,11 @@ class User(Resource):
     def put(self, id):
         user = UserModel.query.get_or_404(id)
         data = request.get_json()
+        user.username = data['username']
         user.firstname = data['firstname']
         user.lastname = data['lastname']
+        user.email = data['email']
+        user.password = data['password']
         db.session.add(user)
         db.session.commit()
         return {"message": "Successfully updated user details"}

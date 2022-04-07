@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
-# from security import authenticate, identity
+from security import authenticate, identity
 import os
 from common.resources.users import Users
 from common.resources.user_crud import User
@@ -18,13 +18,13 @@ db.init_app(app)
 
 # TODO - Add library CORS(app)
 
-# jwt = JWT(app, authenticate, identity)
+jwt = JWT(app, authenticate, identity)
 
 @app.before_first_request
 def create_tables():
     db.create_all()
 
-api.add_resource(User, '/user/<string:id>')
+api.add_resource(User, '/user')
 api.add_resource(Users, '/users')
 
 
