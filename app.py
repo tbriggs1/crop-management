@@ -11,21 +11,26 @@ from common.configuration.db import db
 app = Flask(__name__)
 api = Api(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://tbriggs:example@localhost/postgres'
+app.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = "postgresql://tbriggs:example@51.89.220.72/postgres"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.secret_key = 'supersecret'
+app.secret_key = "supersecret"
 db.init_app(app)
 
 # TODO - Add library CORS(app)
 
+
 jwt = JWT(app, authenticate, identity)
+
 
 @app.before_first_request
 def create_tables():
     db.create_all()
 
-api.add_resource(User, '/user')
-api.add_resource(Users, '/users')
+
+api.add_resource(User, "/user")
+api.add_resource(Users, "/users")
 
 
 if __name__ == "__main__":
