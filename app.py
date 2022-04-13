@@ -6,7 +6,7 @@ import os
 from common.resources.users import Users
 from common.resources.user_crud import User
 from common.configuration.db import db
-
+from common.resources.crop_crud import Crop
 
 app = Flask(__name__)
 api = Api(app)
@@ -31,6 +31,7 @@ def create_tables():
 
 api.add_resource(User, "/user")
 api.add_resource(Users, "/users")
+api.add_resource(Crop, "/crop")
 
 
 if __name__ == "__main__":
