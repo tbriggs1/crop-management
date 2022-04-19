@@ -20,7 +20,7 @@ class User(Resource):
         if request.json:
             data = request.get_json()
             new_user = UserModel(
-                id=str(uuid.uuid4),
+                id=str(uuid.uuid4()),
                 username=data["username"],
                 firstname=data["firstname"],
                 lastname=data["lastname"],

@@ -20,7 +20,7 @@ class Crop(Resource):
         if request.json:
             data = request.get_json()
             new_crop = CropModel(
-                id=str(uuid.uuid4),
+                id=str(uuid.uuid4()),
                 name=data["name"],
                 time_planted=data["time_planted"],
                 username=data["username"],
