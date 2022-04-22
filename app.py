@@ -7,6 +7,7 @@ from common.resources.users import Users
 from common.resources.user_crud import User
 from common.configuration.db import db
 from common.resources.crop_crud import Crop
+from flask_cors import CORS
 
 app = Flask(__name__)
 api = Api(app)
@@ -18,7 +19,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "supersecret"
 db.init_app(app)
 
-# TODO - Add library CORS(app)
+CORS(app)
 
 
 jwt = JWT(app, authenticate, identity)
