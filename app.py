@@ -31,7 +31,7 @@ def create_tables():
 
 
 api.add_resource(User, "/user")
-api.add_resource(Users, "/users")
+api.add_resource(Users, "/profile")
 api.add_resource(Crop, "/crop")
 
 

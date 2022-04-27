@@ -1,17 +1,13 @@
 from flask_restful import Resource
 from common.models.user import UserModel
-
+from flask_jwt import jwt_required
 
 class Users(Resource):
+    @jwt_required()
     def get(self):
-        users = UserModel.query.all()
-        results = [
-            {
-                "id": str(user.id),
-                "firstname": user.firstname,
-                "lastname": user.lastname,
-            }
-            for user in users
-        ]
+        response_body = {
+            "name": "Nagato",
+            "about": "Hello! I'm a full stack developer that loves python and javascript"
+        }
 
-        return {"Users": results}
+        return response_body

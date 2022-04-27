@@ -3,18 +3,21 @@ from flask import request
 from flask_jwt import jwt_required
 from common.models.user import UserModel
 from common.configuration.db import db
+from common.utils.token import Token
 import uuid
 
 
 class User(Resource):
 
+
     # TODO - Add for login @jwt_required()
     def get(self):
-        data = request.get_json()
-        user = UserModel.query.filter_by(username=data["username"]).first()
-        result = {"username": user.username, "email": user.email}
-
-        return {"user": result}
+        data = request.headers
+        # user = UserModel.query.filter_by(username=data["username"]).first()
+        token = Token(data)
+        token.set_token()
+        token.decode_token()
+        return "Token"
 
     def post(self):
         if request.json:
