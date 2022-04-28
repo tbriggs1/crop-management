@@ -10,14 +10,14 @@ import uuid
 class User(Resource):
 
 
-    # TODO - Add for login @jwt_required()
+    @jwt_required()
     def get(self):
         data = request.headers
-        # user = UserModel.query.filter_by(username=data["username"]).first()
         token = Token(data)
-        token.set_token()
-        token.decode_token()
-        return "Token"
+        user = UserModel.find_by_id(token.identity)
+
+        return {'firstname': user.firstname}
+
 
     def post(self):
         if request.json:

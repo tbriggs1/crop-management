@@ -2,7 +2,6 @@ import json
 
 import jwt
 
-
 class Token:
 
     def __init__(self, data):
@@ -11,16 +10,15 @@ class Token:
         :param data: retrieved data
         '''
         self.data = data
-        self.token = ""
-        self.decoded_value = ""
 
-    def set_token(self):
-        self.token = self.data['Authorization']
+    @property
+    def token(self):
+        return self.data['Authorization'].split()[1]
 
-    def decode_token(self):
-        print(self.token)
-        decoded = jwt.decode(self.token, algorithms="HS256")
-        print(decoded)
+    @property
+    def decoded_token(self):
+        return jwt.decode(self.token, 'supersecret', algorithm='HS256')
 
-    def get_decoded_token(self):
-        pass
+    @property
+    def identity(self):
+        return self.decoded_token['identity']
