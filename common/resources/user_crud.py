@@ -16,7 +16,10 @@ class User(Resource):
         token = Token(data)
         user = UserModel.find_by_id(token.identity)
 
-        return {'firstname': user.firstname}
+        return {'firstname': user.firstname,
+                'password': user.password,
+                'username': user.username
+                }
 
 
     def post(self):
@@ -30,6 +33,22 @@ class User(Resource):
                 email=data["email"],
                 password=data["password"],
             )
+
+            if UserModel.find_by_username(data['username']) and UserModel.find_by_email(data['email']):
+                return {
+                    "Message": f"Username {data['username']} and Email {data['email']} already exists"
+                }, 409
+
+            if UserModel.find_by_username(data['username']):
+                return {
+                    "Message": f"Username {data['username']} already exists"
+                }, 409
+
+            if UserModel.find_by_email(data['email']):
+                return {
+                        "Message": f"Email {data['email']} already exists"
+                       }, 409
+
             db.session.add(new_user)
             db.session.commit()
 
